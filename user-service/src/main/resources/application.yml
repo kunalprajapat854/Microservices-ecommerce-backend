@@ -4,7 +4,7 @@ jwt:
 
 spring:
   application:
-    name: user-service
+    name: USER-SERVICE
 
   datasource:
     url: jdbc:mysql://localhost:3306/user_service
