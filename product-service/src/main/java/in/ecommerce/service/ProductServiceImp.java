@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 
 import in.ecommerce.dto.ProductRequest;
 import in.ecommerce.dto.ProductResponse;
+import in.ecommerce.entity.Products;
 import in.ecommerce.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImp  implements ProductService{
 	
 	@Autowired
@@ -16,6 +19,10 @@ public class ProductServiceImp  implements ProductService{
 
 	@Override
 	public ProductResponse createProduct(ProductRequest request) {
+		
+	}
+
+	private ProductResponse mapToResponse(Products savedProduct) {
 		// TODO Auto-generated method stub
 		return null;
 	}
