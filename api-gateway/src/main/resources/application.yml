@@ -13,21 +13,25 @@ spring:
           lower-case-service-id: true
 
       routes:
+        # User Service - Auth
         - id: user-service-auth
-          uri: lb://USER-SERVICE
+          uri: lb://user-service
           predicates:
             - Path=/auth/**
 
+        # User Service - User APIs
         - id: user-service-user
-          uri: lb://USER-SERVICE
+          uri: lb://user-service
           predicates:
             - Path=/user/**
+
+        # Product Service (NEW)
+        - id: product-service
+          uri: lb://PRODUCT_SERVICE
+          predicates:
+            - Path=/products/**
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
