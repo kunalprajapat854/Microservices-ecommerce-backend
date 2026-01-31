@@ -73,16 +73,5 @@ public class ProductResponse {
 		this.active = active;
 	}
 
-	public ProductResponse(Long id, String name, String description, Double price, Integer quantity, String category,
-			Boolean active) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.price = price;
-		this.quantity = quantity;
-		this.category = category;
-		this.active = active;
-	}
-
+		
 }
