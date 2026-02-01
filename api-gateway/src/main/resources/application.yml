@@ -25,11 +25,17 @@ spring:
           predicates:
             - Path=/user/**
 
-        # Product Service (NEW)
+        # Product Service
         - id: product-service
-          uri: lb://PRODUCT_SERVICE
+          uri: lb://product-service
           predicates:
             - Path=/products/**
+
+        # Inventory Service
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/inventory/**
 
 eureka:
   client:
