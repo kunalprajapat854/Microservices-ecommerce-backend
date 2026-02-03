@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "in.ecommerce.client")
+
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {
