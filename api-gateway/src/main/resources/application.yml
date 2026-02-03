@@ -7,43 +7,12 @@ spring:
 
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-
       routes:
-        # User Service - Auth
-        - id: user-service-auth
-          uri: lb://user-service
-          predicates:
-            - Path=/auth/**
-
-        # User Service - User APIs
-        - id: user-service-user
-          uri: lb://user-service
-          predicates:
-            - Path=/user/**
-
-        # Product Service
-        - id: product-service
-          uri: lb://product-service
+        - id: product
+          uri: http://localhost:8082
           predicates:
             - Path=/products/**
 
-        # Inventory Service
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/inventory/**
-
-        # Order Service
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/orders/**
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
