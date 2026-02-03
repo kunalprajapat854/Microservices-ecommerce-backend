@@ -30,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderRespose orderPlaced(OrderRequest orderRequest) {
 		InventoryResponse inventory = client.getInventory(orderRequest.getProductId());
-		if (inventory.getInStock() || inventory.getQuantity() < orderRequest.getQuantity()) {
+		if (!inventory.getInStock() || inventory.getQuantity() < orderRequest.getQuantity()) {
 			throw new RuntimeException("Product out of stock");
 		}
 
