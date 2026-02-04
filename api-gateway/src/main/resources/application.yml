@@ -1,5 +1,5 @@
 jwt:
-   secret:"mySuperSecretKeyForJwtGeneration1234567890"
+  secret: "mySuperSecretKeyForJwtGeneration1234567890"
 
 server:
   port: 8080
@@ -16,10 +16,15 @@ spring:
           lower-case-service-id: true
 
       routes:
-        - id: user-service
+        - id: user-service-auth
           uri: lb://USER-SERVICE
           predicates:
             - Path=/auth/**
+
+        - id: user-service-user
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
 
         - id: product-service
           uri: lb://PRODUCT-SERVICE
@@ -40,8 +45,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
-
 
 logging:
   level:
