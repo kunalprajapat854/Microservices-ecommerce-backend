@@ -1,5 +1,7 @@
 package in.api_gateway.jwtUtil;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -16,6 +18,21 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
 	@Autowired
 	private JwtUtil jwtutil;
+	
+	
+	 private static final List<String> OPEN_API_ENDPOINTS = List.of(
+			     "/auth/",
+			    "/swagger-ui",
+			    "/swagger-ui/",
+			    "/swagger-ui.html",
+			    "/v3/api-docs",
+			    "/v3/api-docs/",
+			    "/user-service/v3/api-docs",
+			    "/product-service/v3/api-docs",
+			    "/inventory-service/v3/api-docs",
+			    "/order-service/v3/api-docs"
+			);
+	    
 
 	@Override
 	public int getOrder() {
@@ -27,7 +44,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 		String path = exchange.getRequest().getURI().getPath();
 
 		// Public APIs
-		if (path.startsWith("/auth/")) {
+		if (isOpenEndpoint(path)) {
 			return chain.filter(exchange);
 		}
 
@@ -45,7 +62,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 			return exchange.getResponse().setComplete();
 		}
 
-		return chain.filter(exchange);
+		return chain.filter	(exchange);
 	}
+	
+	 private boolean isOpenEndpoint(String path) {
+	        return OPEN_API_ENDPOINTS.stream().anyMatch(path::startsWith);
+	    }
 
 }
