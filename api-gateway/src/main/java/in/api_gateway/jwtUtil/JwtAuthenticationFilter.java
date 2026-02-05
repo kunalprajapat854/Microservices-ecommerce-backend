@@ -21,10 +21,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 	
 	
 	 private static final List<String> OPEN_API_ENDPOINTS = List.of(
-			     "/auth/",
+			  "/auth/",
 			    "/swagger-ui",
 			    "/swagger-ui/",
 			    "/swagger-ui.html",
+			    "/swagger-ui/index.html",
 			    "/v3/api-docs",
 			    "/v3/api-docs/",
 			    "/user-service/v3/api-docs",
