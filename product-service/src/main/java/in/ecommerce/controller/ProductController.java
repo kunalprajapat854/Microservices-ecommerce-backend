@@ -39,27 +39,27 @@ public class ProductController {
 
 	}
 
-	@PutMapping("/{productId}")
+	@PutMapping("/{productId:[0-9]+}")
 	public ResponseEntity<ProductResponse> updateProduct(@PathVariable("productId") long productId,
 			@Valid @RequestBody ProductRequest productRequest) {
 		ProductResponse updateProduct = productService.updateProduct(productId, productRequest);
 		return ResponseEntity.ok(updateProduct);
 	}
 
-	@GetMapping("/{ProductId}")
+	@GetMapping("/{ProductId:[0-9]+}")
 	public ResponseEntity<ProductResponse> getProduct(@PathVariable("ProductId") long ProductId) {
 		ProductResponse productById = productService.getProductById(ProductId);
 		return ResponseEntity.ok(productById);
 	}
 
-	@GetMapping("/all-products")
+	@GetMapping("/all")
 	public ResponseEntity<List<ProductResponse>> getAllProduct() {
 		List<ProductResponse> allProducts = productService.getAllProducts();
 		return ResponseEntity.ok(allProducts);
 	}
 
-	@DeleteMapping("/{ProductId}")
-	public ResponseEntity<String> deleteProducts(@PathVariable("ProductId") long ProductId) {
+	@DeleteMapping("/{ProductId:[0-9]+}")
+	public ResponseEntity<String> deleteProducts(@PathVariable("ProductId") Long ProductId) {
 		productService.deleteProduct(ProductId);
 		return ResponseEntity.ok("Product Deleted Successfully");
 	}
