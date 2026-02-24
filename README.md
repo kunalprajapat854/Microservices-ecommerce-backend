@@ -1,168 +1,111 @@
 # 🛒 E-Commerce Backend – Microservices Architecture
 
-![Java](https://img.shields.io/badge/Java-17-blue)
-![Spring Boot](https://img.shields.io/badge/SpringBoot-3.x-brightgreen)
-![Spring Cloud](https://img.shields.io/badge/SpringCloud-Microservices-green)
-![MySQL](https://img.shields.io/badge/Database-MySQL-orange)
-![Docker](https://img.shields.io/badge/Container-Docker-blue)
-![Build](https://img.shields.io/badge/Build-Maven-red)
+<p align="center">
+  <img src="images/microservices-architecture.png" width="900"/>
+</p>
+
+<p align="center">
+  <b>Spring Boot • Spring Cloud • Microservices • Docker • MySQL</b>
+</p>
 
 ---
 
-## 📌 *Project Description*
+## 📌 Overview
 
-A scalable and production-ready **E-commerce Backend System** built using  
+A scalable and production-ready **E-Commerce Backend System** built using  
 **Spring Boot Microservices Architecture**.
 
 This project follows:
 
-- **Clean Architecture**
-- **RESTful APIs**
-- **Centralized Configuration**
-- **Service-to-Service Communication**
-- *Modern Cloud-Native Patterns*
+- Clean Architecture  
+- RESTful APIs  
+- Centralized Configuration  
+- Service-to-Service Communication  
+- Cloud-Native Design Principles  
 
 ---
 
-## 🏗️ Project Overview
+## 🏗️ Architecture
 
-This project is a backend system for an **E-commerce platform** designed using **Microservices Architecture**.
+The system is designed using independent microservices behind an API Gateway.
 
-Each business module is developed as an independent service to ensure:
+### Core Components:
 
-- ✅ **Scalability**
-- ✅ **Maintainability**
-- ✅ **Fault Isolation**
-- ✅ **Independent Deployment**
-
----
-
-# 🏗️ Project Architecture
-
-## 🔹 High-Level Architecture
-
-```text
-                ┌─────────────────────┐
-                │     API Gateway     │
-                │ (Spring Cloud GW)   │
-                └─────────┬───────────┘
-                          │
-        ┌─────────────────┼──────────────────┐
-        │                 │                  │
-   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-   │ User Service│   │Product Svc  │   │Order Service│
-   └─────────────┘   └─────────────┘   └─────────────┘
-        │                 │                  │
-     MySQL DB          MySQL DB           MySQL DB
-        │                 │                  │
-        └──────────────┬────────────────────┘
-                       │
-               ┌──────────────┐
-               │ Payment Svc  │
-               └──────────────┘
-```
+- **API Gateway (Spring Cloud Gateway)**
+- **Service Registry (Eureka)**
+- **Config Server**
+- **User Service**
+- **Product Service**
+- **Order Service**
+- **Payment Service**
+- Independent MySQL databases per service
 
 ---
 
-# 🧱 Microservices Included
+## 🧱 Microservices
 
-## 1️⃣ **User Service**
-- User Registration  
-- Login & Authentication  
-- JWT Token Generation  
-- Role-Based Authorization  
+### User Service
+- Registration
+- Authentication
+- JWT Token Generation
+- Role-Based Access
 
----
+### Product Service
+- Product Management
+- Inventory Handling
+- Category Management
 
-## 2️⃣ **Product Service**
-- Add Product  
-- Update Product  
-- Delete Product  
-- View Products  
-- Category Management  
+### Order Service
+- Order Placement
+- Order History
+- Status Tracking
 
----
-
-## 3️⃣ **Order Service**
-- Place Order  
-- Order History  
-- Order Status Tracking  
-
----
-
-## 4️⃣ **Payment Service**
-- Payment Processing  
-- Payment Status  
-- Order–Payment Integration  
+### Payment Service
+- Payment Processing
+- Payment Status
+- Order Integration
 
 ---
 
-## 5️⃣ **API Gateway**
-- Single Entry Point  
-- Route Mapping  
-- Request Filtering  
-- JWT Validation  
-
----
-
-## 6️⃣ **Service Registry (Eureka)**
-- Service Discovery  
-- Auto Registration of Microservices  
-
----
-
-## 7️⃣ **Config Server**
-- Centralized Configuration Management  
-
----
-
-# ⚙️ Tech Stack
+## ⚙️ Tech Stack
 
 | Layer | Technology |
-|-------|------------|
-| **Backend** | Java 17 |
-| **Framework** | Spring Boot |
-| **Microservices** | Spring Cloud |
-| **API Gateway** | Spring Cloud Gateway |
-| **Service Registry** | Eureka Server |
-| **Database** | MySQL |
-| **ORM** | Spring Data JPA |
-| **Security** | Spring Security + JWT |
-| **Build Tool** | Maven |
-| **Containerization** | Docker |
-| **CI/CD** | GitHub Actions |
-| **Cloud Ready** | AWS Compatible |
+|--------|------------|
+| Backend | Java 17 |
+| Framework | Spring Boot |
+| Microservices | Spring Cloud |
+| API Gateway | Spring Cloud Gateway |
+| Service Discovery | Eureka |
+| Database | MySQL |
+| ORM | Spring Data JPA |
+| Security | Spring Security + JWT |
+| Build Tool | Maven |
+| Containerization | Docker |
 
 ---
 
-# 🔄 Inter-Service Communication
+## 🔄 Inter-Service Communication
 
-- REST Template  
-- OpenFeign  
+- REST
+- OpenFeign
 - Synchronous HTTP Calls  
-- *Future Scope:* Kafka (Event-Driven Architecture)
+- *(Future: Kafka – Event Driven Architecture)*
 
 ---
 
-# 🔐 Security
+## 🔐 Security
 
-- Spring Security  
 - JWT Authentication  
-- Role-Based Access Control  
-- Password Encryption using **BCrypt**
+- Role-Based Authorization  
+- BCrypt Password Encryption  
 
 ---
 
-# 🗄️ Database Design
+## 🗄️ Database Strategy
 
-Each microservice has its own database to maintain:
+Each microservice has its own isolated database:
 
-- Loose Coupling  
-- Data Isolation  
-
-### Example Databases
-
-```text
+```
 user_db
 product_db
 order_db
@@ -171,35 +114,29 @@ payment_db
 
 ---
 
-# 🚀 How to Run the Project
+## 🚀 Run Locally
 
-## Step 1️⃣ Clone Repository
+### 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/your-username/ecommerce-microservices.git
 ```
 
----
-
-## Step 2️⃣ Start Services in Order
+### 2️⃣ Start Services (Order Matters)
 
 1. Config Server  
 2. Eureka Server  
 3. API Gateway  
 4. All Microservices  
 
----
-
-## Step 3️⃣ Run Using Maven
+### 3️⃣ Run Using Maven
 
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
----
-
-## Step 4️⃣ Access API Gateway
+### 4️⃣ Access Gateway
 
 ```
 http://localhost:8080
@@ -207,7 +144,7 @@ http://localhost:8080
 
 ---
 
-# 🐳 Docker Setup (Optional)
+## 🐳 Docker
 
 ```bash
 docker-compose up --build
@@ -215,70 +152,22 @@ docker-compose up --build
 
 ---
 
-# 📊 Future Enhancements
+## 📊 Future Enhancements
 
 - Redis Caching  
-- Kafka Event-Driven Architecture  
+- Kafka Integration  
 - Kubernetes Deployment  
-- Monitoring with Prometheus & Grafana  
-- Distributed Tracing (Zipkin)  
+- Prometheus & Grafana Monitoring  
+- Distributed Tracing (Zipkin)
 
 ---
 
-# 📁 Project Structure
-
-```text
-ecommerce-microservices/
-│
-├── config-server
-├── eureka-server
-├── api-gateway
-├── user-service
-├── product-service
-├── order-service
-├── payment-service
-└── docker-compose.yml
-```
-
----
-
-# 📈 Scalability Strategy
-
-- Stateless Services  
-- Load Balanced APIs  
-- Containerization  
-- Cloud Deployment Ready  
-
----
-
-# ⭐ Why This Project?
-
-This project demonstrates:
-
-- Real-world Microservices Implementation  
-- Production-Level Architecture  
-- Secure REST APIs  
-- Cloud-Ready Deployment Model  
-
----
-
-# 👨‍💻 Author
+## 👨‍💻 Author
 
 **Kunal Prajapat**  
-*Java Backend Developer | Microservices Enthusiast*
+Java Backend Developer  
 
 🔗 LinkedIn:  
-[https://www.linkedin.com/in/kunal-prajapat-java-dev/](https://www.linkedin.com/in/kunal-prajapat-java-dev/)
+https://www.linkedin.com/in/kunal-prajapat-java-dev/
 
 ---
-
-# 📌 Repository Info
-
-- ⭐ Stars: 0  
-- 👀 Watchers: 0  
-- 🍴 Forks: 0  
-- 🛠 Language: **Java (100%)**  
-
----
-
-© 2026 GitHub, Inc.
