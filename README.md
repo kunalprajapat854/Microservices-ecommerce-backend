@@ -1,7 +1,7 @@
 # 🛒 E-Commerce Backend – Microservices Architecture
 
 <p align="center">
-  <img src="images/microservices-architecture.png" width="900"/>
+  <img src="https://chatgpt.com/s/m_699de2930f7c81919c429000750524e3" width="900"/>
 </p>
 
 <p align="center">
