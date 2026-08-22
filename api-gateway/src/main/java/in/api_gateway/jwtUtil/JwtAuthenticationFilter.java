@@ -18,22 +18,23 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
 	@Autowired
 	private JwtUtil jwtutil;
-	
-	
-	 private static final List<String> OPEN_API_ENDPOINTS = List.of(
-			  "/auth/",
-			    "/swagger-ui",
-			    "/swagger-ui/",
-			    "/swagger-ui.html",
-			    "/swagger-ui/index.html",
-			    "/v3/api-docs",
-			    "/v3/api-docs/",
-			    "/user-service/v3/api-docs",
-			    "/product-service/v3/api-docs",
-			    "/inventory-service/v3/api-docs",
-			    "/order-service/v3/api-docs"
-			);
-	    
+
+	// BUG-21 FIX: Added /payment-service/v3/api-docs to the open endpoints list.
+	// It was missing, causing 401 when accessing Payment Service Swagger docs via the gateway.
+	private static final List<String> OPEN_API_ENDPOINTS = List.of(
+			"/auth/",
+			"/swagger-ui",
+			"/swagger-ui/",
+			"/swagger-ui.html",
+			"/swagger-ui/index.html",
+			"/v3/api-docs",
+			"/v3/api-docs/",
+			"/user-service/v3/api-docs",
+			"/product-service/v3/api-docs",
+			"/inventory-service/v3/api-docs",
+			"/order-service/v3/api-docs",
+			"/payment-service/v3/api-docs"   // BUG-21 FIX
+		);
 
 	@Override
 	public int getOrder() {
@@ -63,11 +64,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 			return exchange.getResponse().setComplete();
 		}
 
-		return chain.filter	(exchange);
+		return chain.filter(exchange);
 	}
-	
-	 private boolean isOpenEndpoint(String path) {
-	        return OPEN_API_ENDPOINTS.stream().anyMatch(path::startsWith);
-	    }
+
+	private boolean isOpenEndpoint(String path) {
+		return OPEN_API_ENDPOINTS.stream().anyMatch(path::startsWith);
+	}
 
 }
