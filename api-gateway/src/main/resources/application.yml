@@ -45,7 +45,8 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - "http://localhost:8088"
+              # BUG-20 FIX: Removed http://localhost:8088 (the gateway's own origin — useless in CORS).
+              # CORS origins refer to the BROWSER's origin, not the server's own address.
               - "http://localhost:3000"
             allowedMethods:
               - GET
