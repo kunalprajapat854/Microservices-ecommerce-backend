@@ -1,11 +1,12 @@
 package in.api_gateway.jwtUtil;
 
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 
 @Component
 public class JwtUtil {
@@ -21,14 +22,14 @@ public class JwtUtil {
 
     public void validateToken(String token) {
         Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                // BUG-22 FIX: Use explicit StandardCharsets.UTF_8 to ensure consistent behaviour
+                // across all JVMs, matching user-service which also uses UTF_8.
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseClaimsJws(token);
     }
-    
-    @PostConstruct
-    public void checkSecret() {
-        System.out.println("JWT SECRET LOADED: " + secret);
-    }
+
+    // BUG-10 FIX: Removed @PostConstruct checkSecret() method that was printing the JWT
+    // signing secret to application logs — a serious security vulnerability.
 
 }
