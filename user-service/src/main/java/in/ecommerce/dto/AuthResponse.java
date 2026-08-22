@@ -15,13 +15,7 @@ public class AuthResponse {
 
 	private List<String> roles;
 
-	public AuthResponse(String token, String type, String email, List<String> roles) {
-		super();
-		this.token = token;
-		this.type = type;
-		this.email = email;
-		this.roles = roles;
-	}
+
 
 	public String getToken() {
 		return token;
