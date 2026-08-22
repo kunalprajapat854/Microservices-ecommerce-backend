@@ -1,29 +1,23 @@
 package in.ecommerce.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import in.ecommerce.ProductServiceApplication;
+
 import in.ecommerce.dto.ProductRequest;
 import in.ecommerce.dto.ProductResponse;
 import in.ecommerce.entity.Products;
 import in.ecommerce.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImp implements ProductService {
 
-	private final ProductServiceApplication productServiceApplication;
+	// BUG-04 FIX: Removed unnecessary injection of ProductServiceApplication (main class) into this service.
+	// The field was never used, and caused a constructor conflict with @RequiredArgsConstructor.
 
 	@Autowired
 	private ProductRepository productRepository;
-
-	ProductServiceImp(ProductServiceApplication productServiceApplication) {
-		this.productServiceApplication = productServiceApplication;
-	}
 
 	@Override
 	public ProductResponse createProduct(ProductRequest request) {
@@ -36,11 +30,9 @@ public class ProductServiceImp implements ProductService {
 		product.setActive(true);
 		Products savedProducts = productRepository.save(product);
 		return mapToResponse(savedProducts);
-
 	}
 
 	private ProductResponse mapToResponse(Products product) {
-
 		ProductResponse response = new ProductResponse();
 		response.setId(product.getId());
 		response.setName(product.getName());
@@ -49,10 +41,7 @@ public class ProductServiceImp implements ProductService {
 		response.setQuantity(product.getQuantity());
 		response.setCategory(product.getCategory());
 		response.setActive(product.getActive());
-		System.out.println("PRODUCT FROM DB: " + product);
-
 		return response;
-
 	}
 
 	@Override
@@ -61,33 +50,32 @@ public class ProductServiceImp implements ProductService {
 				.orElseThrow(() -> new RuntimeException("Product not found"));
 
 		product.setName(request.getName());
-		product.setPrice(request.getPrice());
-		product.setCategory(request.getCategory());
 		product.setDescription(request.getDescription());
-		product.setPrice(request.getPrice());
+		product.setCategory(request.getCategory());
+		product.setQuantity(request.getQuantity());
 		product.setActive(request.getActive());
+
+		// BUG-16 FIX: Removed duplicate setPrice call. Price is now set exactly once.
+		product.setPrice(request.getPrice());
 
 		Products updateProduct = productRepository.save(product);
 		return mapToResponse(updateProduct);
-
 	}
 
 	@Override
-	public ProductResponse getProductById(Long ProductId) {
-		Products product = productRepository.findById(ProductId)
+	public ProductResponse getProductById(Long productId) {
+		Products product = productRepository.findById(productId)
 				.orElseThrow(() -> new RuntimeException("Product not found"));
 		return mapToResponse(product);
 	}
 
 	@Override
 	public List<ProductResponse> getAllProducts() {
-
 		return productRepository.findByActiveTrue().stream().map(this::mapToResponse).toList();
-
 	}
 
-	public void deleteProduct(Long ProductId) {
-		Products products = productRepository.findById(ProductId)
+	public void deleteProduct(Long productId) {
+		Products products = productRepository.findById(productId)
 				.orElseThrow(() -> new RuntimeException("Product not found"));
 		// soft delete
 		products.setActive(false);
