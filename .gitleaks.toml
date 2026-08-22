@@ -1,0 +1,13 @@
+title = "gitleaks config"
+
+[extend]
+# Start from Gitleaks' default ruleset and only add local exceptions below.
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''(.*?)(jpg|gif|png|doc|pdf|bin)$''',
+  '''(.*?)/target/(.*)''',
+  '''\.gitleaks\.toml''',
+]
