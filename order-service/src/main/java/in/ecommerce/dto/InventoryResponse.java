@@ -1,9 +1,7 @@
 package in.ecommerce.dto;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+// BUG-19 FIX: Removed @Getter/@Setter from Lombok alongside manually-written accessors.
+// Keeping only manual getters/setters to avoid duplicate method compile errors.
 public class InventoryResponse {
 
 	private Long productId;
@@ -31,6 +29,17 @@ public class InventoryResponse {
 	}
 
 	public void setInStock(Boolean inStock) {
+		this.inStock = inStock;
+	}
+
+	public InventoryResponse() {
+		super();
+	}
+
+	public InventoryResponse(Long productId, Integer quantity, Boolean inStock) {
+		super();
+		this.productId = productId;
+		this.quantity = quantity;
 		this.inStock = inStock;
 	}
 

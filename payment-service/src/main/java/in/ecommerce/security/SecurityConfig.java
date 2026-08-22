@@ -3,7 +3,6 @@ package in.ecommerce.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -11,9 +10,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * BUG-05 FIX: Added JwtAuthFilter to the filter chain.
- * Previously SecurityContextHolder was never populated, so @PreAuthorize always returned 403.
- * BUG-14 FIX: @EnableMethodSecurity is declared here only; removed from MethodSecurityConfig.
+ * BUG-06 FIX: Added SecurityConfig for payment-service.
+ * Without this, Spring Security uses default form-login and @PreAuthorize is silently ignored.
+ * This sets up stateless JWT-based security with @EnableMethodSecurity to activate @PreAuthorize.
  */
 @Configuration
 @EnableMethodSecurity
@@ -41,21 +40,15 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
-                // Swagger endpoints - PUBLIC
+                // Swagger - PUBLIC
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-
-                // Optional: Actuator
+                // Actuator
                 .requestMatchers("/actuator/**").permitAll()
-
-                // Order APIs - secured
-                .requestMatchers(HttpMethod.POST, "/orders/**").hasRole("USER")
-                .requestMatchers(HttpMethod.GET, "/orders/**").hasRole("USER")
-
-                // Everything else
+                // Everything else requires authentication
                 .anyRequest().authenticated()
             )
 
-            // BUG-05 FIX: Register JWT filter before Spring's username/password filter
+            // Register JWT filter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

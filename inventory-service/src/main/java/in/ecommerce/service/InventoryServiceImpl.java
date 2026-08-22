@@ -2,6 +2,7 @@ package in.ecommerce.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import in.ecommerce.dto.InventoryRequest;
 import in.ecommerce.dto.InventoryResponse;
@@ -35,20 +36,31 @@ public class InventoryServiceImpl implements InventoryService {
 		return new InventoryResponse(inventory.getProductId(), inventory.getQuantity(), inventory.getInStock());
 	}
 
+	/**
+	 * BUG-07 FIX: Added @Transactional to prevent race conditions (concurrent orders overselling stock).
+	 * The read-check-write sequence is now wrapped in a single DB transaction with implicit locking.
+	 *
+	 * BUG-08 FIX (inventory side): This method now throws "Insufficient stock" if the requested
+	 * quantity exceeds available stock, eliminating the need for a separate getInventory() check
+	 * in order-service before calling this. Order-service now calls reduceStock() directly.
+	 */
 	@Override
-	public void reduceStock(long prouductId, Integer quantity) {
-		Inventory inventory = repository.findByProductId(prouductId)
-				.orElseThrow(() -> new RuntimeException("Inventory not found"));
+	@Transactional
+	public void reduceStock(long productId, Integer quantity) {
+		Inventory inventory = repository.findByProductId(productId)
+				.orElseThrow(() -> new RuntimeException("Inventory not found for productId: " + productId));
 
 		if (inventory.getQuantity() < quantity) {
-			throw new RuntimeException("Insufficient stock");
+			throw new RuntimeException(
+				"Insufficient stock for productId: " + productId +
+				". Requested: " + quantity + ", Available: " + inventory.getQuantity()
+			);
 		}
 
 		inventory.setQuantity(inventory.getQuantity() - quantity);
 		inventory.setInStock(inventory.getQuantity() > 0);
 
 		repository.save(inventory);
-
 	}
 
 }

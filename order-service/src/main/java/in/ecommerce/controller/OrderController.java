@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import in.ecommerce.dto.OrderRequest;
-import in.ecommerce.dto.OrderRespose;
+import in.ecommerce.dto.OrderResponse;
 import in.ecommerce.entity.Order;
 import in.ecommerce.service.OrderService;
 import lombok.RequiredArgsConstructor;
 
+// BUG-23 FIX: Updated to use corrected class name OrderResponse
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -28,14 +29,13 @@ public class OrderController {
 
 	@PreAuthorize(value = "hasRole('USER')")
 	@PostMapping
-	public ResponseEntity<OrderRespose> placeOrder(@RequestBody OrderRequest request) {
+	public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest request) {
 		return ResponseEntity.ok(service.orderPlaced(request));
 	}
 
 	@PreAuthorize(value = "hasRole('USER')")
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<Order>> getOrdersByUser(@PathVariable Long userId) {
-
 		return ResponseEntity.ok(service.getOrderByUser(userId));
 	}
 

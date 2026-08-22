@@ -16,26 +16,24 @@ import in.ecommerce.entity.Roles;
 import in.ecommerce.entity.User;
 import in.ecommerce.repository.RolesRepository;
 import in.ecommerce.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
+// BUG-09 FIX: Removed conflicting @AllArgsConstructor + @RequiredArgsConstructor.
+// All fields use @Autowired field injection, so no Lombok constructor annotations are needed.
 @Service
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
 	@Autowired
 	private UserRepository repository;
-	
+
 	@Autowired
 	private RolesRepository rolesRepository;
-	
+
 	@Autowired
-	private PasswordEncoder encoder ;
-	
+	private PasswordEncoder encoder;
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+
 	@Autowired
 	private JwtService jwtService;
 
@@ -58,7 +56,6 @@ public class AuthServiceImpl implements AuthService {
 	    repository.save(user);
 	}
 
-
 	public AuthResponse login(LoginRequest loginRequest) {
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -66,25 +63,19 @@ public class AuthServiceImpl implements AuthService {
 		User user = repository.findByEmail(loginRequest.getEmail())
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
+		// BUG-02 FIX: Removed duplicate generateToken call. Token is generated exactly once.
+		// BUG-11 FIX: Removed System.out.println that was leaking JWT tokens to logs.
 		String token = jwtService.generateToken(user);
 
-		  String tokenString = jwtService.generateToken(user);
-		  System.out.println("TOKEN GENERATED: " + token);
+        return new AuthResponse(
+                token,
+                "Bearer",
+                user.getEmail(),
+                user.getRoles()
+                        .stream()
+                        .map(Roles::getName)
+                        .toList()
+        );
+    }
 
-
-	        return new AuthResponse(
-	                token,
-	                "Bearer",
-	                user.getEmail(),
-	                user.getRoles()
-	                        .stream()
-	                        .map(Roles::getName)
-	                        .toList()
-	        );
-	    }
-
-	
-	
-	
-
-	}
+}

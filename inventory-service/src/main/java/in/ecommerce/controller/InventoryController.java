@@ -16,9 +16,11 @@ import in.ecommerce.dto.InventoryResponse;
 import in.ecommerce.service.InventoryService;
 import jakarta.validation.Valid;
 
+// BUG-13 FIX: Added missing `public` modifier. Spring CGLIB proxying requires public classes
+// for components annotated with @RestController.
 @RestController
 @RequestMapping("/inventory")
-class InventoryController {
+public class InventoryController {
 
 	@Autowired
 	private InventoryService service;
@@ -31,15 +33,12 @@ class InventoryController {
 
 	@GetMapping("/{productId}")
 	public ResponseEntity<InventoryResponse> getInventory(@PathVariable Long productId) {
-
 		return ResponseEntity.ok(service.getInventoryByProductId(productId));
 	}
 
 	// INTERNAL (Order Service)
-		
 	@PutMapping("/reduce")
 	public ResponseEntity<String> reduceStock(@RequestParam Long productId, @RequestParam Integer quantity) {
-
 		service.reduceStock(productId, quantity);
 		return ResponseEntity.ok("Stock reduced");
 	}

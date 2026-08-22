@@ -44,7 +44,6 @@ public class User implements UserDetails {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-
 	private Set<Roles> roles = new HashSet<>();
 
 	public Long getUser_id() {
@@ -55,7 +54,15 @@ public class User implements UserDetails {
 		this.user_id = user_id;
 	}
 
+	// BUG-01 FIX: Spring Security calls getUsername() to get the principal identifier.
+	// Auth is email-based (JWT subject = email, loadUserByUsername uses email),
+	// so getUsername() MUST return email, not the username field.
+	@Override
 	public String getUsername() {
+		return email;
+	}
+
+	public String getDisplayName() {
 		return username;
 	}
 
@@ -71,6 +78,7 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -79,6 +87,7 @@ public class User implements UserDetails {
 		this.password = password;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -100,10 +109,6 @@ public class User implements UserDetails {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList();
 	}
 
-	public String getUsername1() {
-		return email;
-	}
-
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -117,10 +122,6 @@ public class User implements UserDetails {
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
-	}
-
-	public boolean isEnabled1() {
-		return enabled;
 	}
 
 }
