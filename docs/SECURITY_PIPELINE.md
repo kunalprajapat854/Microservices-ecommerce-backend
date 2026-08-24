@@ -9,26 +9,24 @@ via [`.github/workflows/devsecops.yml`](../.github/workflows/devsecops.yml).
 |---|---|---|
 | Secrets detection | Gitleaks (`gitleaks/gitleaks-action`) | Yes — fails on any finding |
 | Build & unit test | Maven (per service, matrix) | Yes — build must compile & pass tests |
-| SAST | SonarQube/SonarCloud (`sonar-maven-plugin`, quality gate) | Yes — `sonar.qualitygate.wait=true` |
+| SAST | SonarCloud (single combined project, `sonar-project.properties` at repo root) | Yes — `sonar.qualitygate.wait=true` |
 | Container build | `docker build` (per service) | N/A (prerequisite for scan) |
 | Container vulnerability scan | Trivy (`aquasecurity/trivy-action`) | Yes — CRITICAL severity fails the job |
 | Deploy | `deploy-gate` job | Only runs if gitleaks + sonarqube + trivy-scan all pass |
 
 ## One-time setup required
 
-1. **SonarCloud**
-   - Sign in at [sonarcloud.io](https://sonarcloud.io) with GitHub, import the
-     `kunalprajapat854/Microservices-ecommerce-backend` repo, create the
-     organization key `kunalprajapat854` (or update the `sonar.organization`
-     property in each `pom.xml` to match whatever key SonarCloud assigns you).
-   - Create one project per service with keys matching each pom's
-     `sonar.projectKey` (`kunalprajapat854_<service>`), or let "Analyze new
-     project" auto-create them on first scan.
-   - Generate a token: My Account → Security → Generate Token.
+1. **SonarCloud** (single combined project, key `kunalprajapat854_Microservices-ecommerce-backend`, org `kunalprajapat854` — already created)
+   - Configuration lives in [`sonar-project.properties`](../sonar-project.properties)
+     at the repo root: it points at each service's `src/main`, `src/test`,
+     compiled `target/classes`, and Jacoco XML report, so one scan covers all
+     seven microservices under one quality gate/dashboard.
+   - Project → Administration → **Analysis Method** → turn off Automatic
+     Analysis, set to **CI-based**, so results reflect the GitHub Actions scan.
+   - Generate a token: My Account → Security → Generate Token
+     (regenerate if a token was ever pasted/screenshotted anywhere).
    - Add it as a repo secret: Settings → Secrets and variables → Actions →
      New repository secret → name `SONAR_TOKEN`.
-   - Set each project to **CI-based analysis** (not automatic analysis) so
-     the quality gate reflects the GitHub Actions scan.
 2. **Trivy** — no account needed, runs self-contained via the action.
 3. **Gitleaks** — no account needed for the OSS action; `GITHUB_TOKEN` is auto-provided.
 4. **Branch protection** — Settings → Branches → protect `main`, require the

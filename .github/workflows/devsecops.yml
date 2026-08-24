@@ -69,44 +69,41 @@ jobs:
           retention-days: 7
 
   # ------------------------------------------------------------------
-  # 3. SAST — SonarQube/SonarCloud static analysis (matrix)
+  # 3. SAST — SonarCloud static analysis (single combined project)
   # ------------------------------------------------------------------
   sonarqube:
-    name: SAST (SonarQube - ${{ matrix.service }})
+    name: SAST (SonarCloud - combined)
     runs-on: ubuntu-latest
     needs: build-test
-    strategy:
-      fail-fast: false
-      matrix:
-        service:
-          - api-gateway
-          - inventory-service
-          - order-service
-          - payment-service
-          - product-service
-          - service-registry
-          - user-service
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # required for SonarQube blame/history analysis
+          fetch-depth: 0 # required for SonarCloud blame/history analysis
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
           cache: maven
+      - name: Build & test every service (generates classes + jacoco reports)
+        run: |
+          for svc in api-gateway inventory-service order-service payment-service product-service service-registry user-service; do
+            echo "== $svc =="
+            (cd "$svc" && ./mvnw -B clean test)
+          done
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar-${{ matrix.service }}
-          restore-keys: ${{ runner.os }}-sonar-${{ matrix.service }}
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: SonarCloud scan
-        working-directory: ${{ matrix.service }}
+        uses: sonarsource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # projectKey/organization/host.url are set in each service's pom.xml
-        run: ./mvnw -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.qualitygate.wait=true
+        # reads sonar-project.properties at repo root
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
 
   # ------------------------------------------------------------------
   # 4. Build container images
