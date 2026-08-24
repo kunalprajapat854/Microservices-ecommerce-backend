@@ -95,15 +95,18 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
-      - name: SonarQube scan
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar-${{ matrix.service }}
+          restore-keys: ${{ runner.os }}-sonar-${{ matrix.service }}
+      - name: SonarCloud scan
         working-directory: ${{ matrix.service }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: >
-          ./mvnw -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -Dsonar.projectKey=ecommerce-${{ matrix.service }}
-          -Dsonar.qualitygate.wait=true
+        # projectKey/organization/host.url are set in each service's pom.xml
+        run: ./mvnw -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.qualitygate.wait=true
 
   # ------------------------------------------------------------------
   # 4. Build container images

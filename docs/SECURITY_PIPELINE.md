@@ -16,9 +16,19 @@ via [`.github/workflows/devsecops.yml`](../.github/workflows/devsecops.yml).
 
 ## One-time setup required
 
-1. **SonarQube/SonarCloud**
-   - Create an org + one project per service (`ecommerce-<service>`), or one project with modules.
-   - Add repo secrets: `SONAR_TOKEN`, `SONAR_HOST_URL` (Settings → Secrets and variables → Actions).
+1. **SonarCloud**
+   - Sign in at [sonarcloud.io](https://sonarcloud.io) with GitHub, import the
+     `kunalprajapat854/Microservices-ecommerce-backend` repo, create the
+     organization key `kunalprajapat854` (or update the `sonar.organization`
+     property in each `pom.xml` to match whatever key SonarCloud assigns you).
+   - Create one project per service with keys matching each pom's
+     `sonar.projectKey` (`kunalprajapat854_<service>`), or let "Analyze new
+     project" auto-create them on first scan.
+   - Generate a token: My Account → Security → Generate Token.
+   - Add it as a repo secret: Settings → Secrets and variables → Actions →
+     New repository secret → name `SONAR_TOKEN`.
+   - Set each project to **CI-based analysis** (not automatic analysis) so
+     the quality gate reflects the GitHub Actions scan.
 2. **Trivy** — no account needed, runs self-contained via the action.
 3. **Gitleaks** — no account needed for the OSS action; `GITHUB_TOKEN` is auto-provided.
 4. **Branch protection** — Settings → Branches → protect `main`, require the
